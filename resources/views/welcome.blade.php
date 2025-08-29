@@ -548,7 +548,73 @@
       </p>
     </div>
     
-    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-2xl shadow-lg">
+        <div class="flex items-center mb-4">
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6">"Amazing photo booth experience! The quality was outstanding and our guests loved the instant prints. Highly recommend!"</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold mr-4">
+            S
+          </div>
+          <div>
+            <div class="font-semibold text-gray-800">Sarah Johnson</div>
+            <div class="text-sm text-gray-600">Wedding Client</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-2xl shadow-lg">
+        <div class="flex items-center mb-4">
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6">"Professional service from start to finish. The setup was seamless and the photos turned out perfect for our corporate event."</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center text-white font-bold mr-4">
+            M
+          </div>
+          <div>
+            <div class="font-semibold text-gray-800">Mike Chen</div>
+            <div class="text-sm text-gray-600">Corporate Client</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-2xl shadow-lg">
+        <div class="flex items-center mb-4">
+          <div class="flex text-yellow-400">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+        </div>
+        <p class="text-gray-600 mb-6">"The best photo booth we've ever used! The props were hilarious and the social sharing feature was a huge hit with our guests."</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center text-white font-bold mr-4">
+            E
+          </div>
+          <div>
+            <div class="font-semibold text-gray-800">Emma Davis</div>
+            <div class="text-sm text-gray-600">Birthday Party</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="mt-10 text-center">
       <button onclick="openFeedbackOverviewModal()" class="group relative overflow-hidden inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-primary via-secondary to-accent text-white font-bold text-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-500">
         <div class="relative z-10 flex items-center gap-3">
@@ -927,6 +993,37 @@
     </div>
   </div>
 </div>
+
+<style>
+  .float-slow { animation: float 6s ease-in-out infinite; }
+  @keyframes float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-15px);} }
+
+  .fade-up { opacity: 0; transform: translateY(40px); transition: all 1s ease; }
+  .fade-up.show { opacity: 1; transform: translateY(0); }
+</style>
+
+<!-- JS: Parallax + Scroll Fade -->
+<script>
+  // Parallax
+  document.addEventListener("mousemove", (e) => {
+    document.querySelectorAll(".parallax-element").forEach(el => {
+      const speed = parseFloat(el.getAttribute("data-speed"));
+      const x = (window.innerWidth - e.pageX * speed) / 100;
+      const y = (window.innerHeight - e.pageY * speed) / 100;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+    });
+  });
+
+  // Fade in on scroll
+  const fadeElements = document.querySelectorAll(".fade-up");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("show");
+    });
+  }, { threshold: 0.2 });
+  fadeElements.forEach(el => observer.observe(el));
+</script>
+
 <script>
   const PHOTOS_BY_EVENT = @json($photosByEvent ?? []);
   function openPublicEventModal(eventType){

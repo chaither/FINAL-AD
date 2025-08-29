@@ -11,6 +11,8 @@ use App\Http\Controllers\StatsController;
 use App\Http\Controllers\ContactInfoController;
 
 Route::get('/', [PackageController::class, 'publicPackages']);
+// Public message submission
+Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
 // Public feedback submission
 Route::post('/feedback', [FeedbackController::class, 'storePublic'])->name('feedback.storePublic');
 Route::get('/feedback/overview', [FeedbackController::class, 'getPublicFeedback'])->name('feedback.getPublic');
@@ -27,7 +29,7 @@ Route::get('/gallery/birthday', function () {
     return view('gallery.birthday-gallery');
 });
 
-Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+
 
 // Admin auth & dashboard
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');

@@ -34,7 +34,7 @@ class MessageController
         }
 
         $messages = $query->latest()->paginate(20)->appends($request->all());
-        return view('admin.messages', compact('messages'));
+        return view('admin.message.messages', compact('messages'));
     }
 
     public function store(Request $request): RedirectResponse

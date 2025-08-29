@@ -8,16 +8,23 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Http\Response;      
+
 
 class AdminAuthController extends Controller
 {
     /**
     * Show the admin login form.
     */
-    public function showLogin(): View
-    {
-        return view('admin.login');
-    }
+   
+    public function showLogin(): Response
+{
+    $loginView = cache()->remember('admin_login_page', 60, function () {
+        return view('admin.login')->render(); // cached HTML
+    });
+
+    return response($loginView);
+}
 
     /**
     * Handle admin login attempt.
@@ -33,6 +40,10 @@ class AdminAuthController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
+
+            // clear cached dashboard data on successful login
+            cache()->forget('dashboard_data_' . auth()->id());
+
             return redirect()->intended('/dashboard');
         }
 
@@ -46,18 +57,17 @@ class AdminAuthController extends Controller
     */
     public function dashboard(): View
     {
-        $totalMessages = ContactMessage::count();
-        $todaysMessages = ContactMessage::whereDate('created_at', now()->toDateString())->count();
-        $weeksMessages = ContactMessage::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
+        // Cache dashboard data per user for 60 seconds
+        $data = cache()->remember('dashboard_data_' . auth()->id(), 60, function () {
+            return [
+                'totalMessages'  => ContactMessage::count(),
+                'todaysMessages' => ContactMessage::whereDate('created_at', now()->toDateString())->count(),
+                'weeksMessages'  => ContactMessage::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+                'pins'           => Pin::where('user_id', auth()->id())->latest()->get(),
+            ];
+        });
 
-        $pins = Pin::where('user_id', auth()->id())->latest()->get();
-
-        return view('admin.dashboard', [
-            'totalMessages' => $totalMessages,
-            'todaysMessages' => $todaysMessages,
-            'weeksMessages' => $weeksMessages,
-            'pins' => $pins,
-        ]);
+        return view('admin.dashboard', $data);
     }
 
     /**
@@ -69,8 +79,9 @@ class AdminAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // clear cached dashboard data on logout
+        cache()->forget('dashboard_data_' . auth()->id());
+
         return redirect()->route('admin.login');
     }
 }
-
-
