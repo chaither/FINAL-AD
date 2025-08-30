@@ -10,21 +10,30 @@ class PhotoController extends Controller
 {
     public function index()
     {
-        $photos = Photo::ordered()->get();
-        $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+        // Cache photos and event data for 60 seconds
+        $data = cache()->remember('photos_index_data', 60, function () {
+            $photos = Photo::ordered()->get();
+            $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+            
+            // Get photo counts by event type
+            $photoCounts = [];
+            foreach ($eventTypes as $eventType) {
+                $photoCounts[$eventType] = Photo::where('event_type', $eventType)->count();
+            }
+            
+            return compact('photos', 'eventTypes', 'photoCounts');
+        });
         
-        // Get photo counts by event type
-        $photoCounts = [];
-        foreach ($eventTypes as $eventType) {
-            $photoCounts[$eventType] = Photo::where('event_type', $eventType)->count();
-        }
-        
-        return view('admin.photos.index', compact('photos', 'eventTypes', 'photoCounts'));
+        return view('admin.photos.index', $data);
     }
 
     public function create()
     {
-        $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+        // Cache event types for 300 seconds (5 minutes) as they rarely change
+        $eventTypes = cache()->remember('photo_event_types', 300, function () {
+            return ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+        });
+        
         return view('admin.photos.create', compact('eventTypes'));
     }
 
@@ -64,13 +73,20 @@ class PhotoController extends Controller
 
         Photo::create($validated);
 
+        // Clear cached photos data after creating new photo
+        cache()->forget('photos_index_data');
+
         return redirect()->route('photos.index')
             ->with('success', 'Photo uploaded successfully!');
     }
 
     public function edit(Photo $photo)
     {
-        $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+        // Cache event types for 300 seconds (5 minutes) as they rarely change
+        $eventTypes = cache()->remember('photo_event_types', 300, function () {
+            return ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+        });
+        
         return view('admin.photos.edit', compact('photo', 'eventTypes'));
     }
 
@@ -115,6 +131,9 @@ class PhotoController extends Controller
 
         $photo->update($validated);
 
+        // Clear cached photos data after updating photo
+        cache()->forget('photos_index_data');
+
         return redirect()->route('photos.index')
             ->with('success', 'Photo updated successfully!');
     }
@@ -128,6 +147,9 @@ class PhotoController extends Controller
 
         $photo->delete();
 
+        // Clear cached photos data after deleting photo
+        cache()->forget('photos_index_data');
+
         return redirect()->route('photos.index')
             ->with('success', 'Photo deleted successfully!');
     }
@@ -135,6 +157,9 @@ class PhotoController extends Controller
     public function toggleStatus(Photo $photo)
     {
         $photo->update(['is_active' => !$photo->is_active]);
+
+        // Clear cached photos data after status change
+        cache()->forget('photos_index_data');
 
         return redirect()->route('photos.index')
             ->with('success', 'Photo status updated!');
@@ -151,6 +176,9 @@ class PhotoController extends Controller
         foreach ($request->photos as $photoData) {
             Photo::where('id', $photoData['id'])->update(['sort_order' => $photoData['sort_order']]);
         }
+
+        // Clear cached photos data after reordering
+        cache()->forget('photos_index_data');
 
         return response()->json(['success' => true]);
     }

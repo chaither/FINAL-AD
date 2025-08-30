@@ -9,13 +9,23 @@ class FeedbackController extends Controller
 {
     public function index()
     {
-        $feedback = Feedback::orderByDesc('created_at')->paginate(12);
+        // Cache feedback data for 60 seconds
+        $feedback = cache()->remember('admin_feedback_list', 60, function () {
+            return Feedback::orderByDesc('created_at')->paginate(12);
+        });
+        
         return view('admin.feedback.index', compact('feedback'));
     }
 
     public function destroy(Feedback $feedback)
     {
         $feedback->delete();
+        
+        // Clear cached feedback data after deletion
+        cache()->forget('admin_feedback_list');
+        cache()->forget('public_feedback_list');
+        cache()->forget('feedback_stats');
+        
         return redirect()->route('feedback.index')->with('success', 'Feedback deleted');
     }
 
@@ -37,16 +47,24 @@ class FeedbackController extends Controller
             'is_approved' => true,
         ]);
 
+        // Clear cached feedback data after creating new feedback
+        cache()->forget('admin_feedback_list');
+        cache()->forget('public_feedback_list');
+        cache()->forget('feedback_stats');
+
         return redirect('/')->with('status', 'Thank you for your feedback!')->with('openFeedback', true);
     }
 
     // Public feedback overview
     public function getPublicFeedback()
     {
-        $feedback = Feedback::where('is_approved', true)
+        // Cache public feedback for 120 seconds (2 minutes)
+        $feedback = cache()->remember('public_feedback_list', 120, function () {
+            return Feedback::where('is_approved', true)
                            ->orderByDesc('created_at')
                            ->limit(20)
                            ->get();
+        });
         
         return response()->json($feedback);
     }

@@ -11,29 +11,36 @@ class MessageController
 {
     public function index(Request $request): View
     {
-        $query = ContactMessage::query();
+        // Create a unique cache key based on request parameters
+        $cacheKey = 'messages_filtered_' . md5(serialize($request->all()));
+        
+        // Cache filtered messages for 30 seconds
+        $messages = cache()->remember($cacheKey, 30, function () use ($request) {
+            $query = ContactMessage::query();
 
-        // Filter by name (first or last)
-        if ($request->filled('name')) {
-            $name = $request->input('name');
-            $query->where(function($q) use ($name) {
-                $q->where('first_name', 'like', "%$name%")
-                  ->orWhere('last_name', 'like', "%$name%")
-                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%$name%"]);
-            });
-        }
+            // Filter by name (first or last)
+            if ($request->filled('name')) {
+                $name = $request->input('name');
+                $query->where(function($q) use ($name) {
+                    $q->where('first_name', 'like', "%$name%")
+                      ->orWhere('last_name', 'like', "%$name%")
+                      ->orWhereRaw("CONCAT(first_name, ' ', last_name) like ?", ["%$name%"]);
+                });
+            }
 
-        // Filter by event
-        if ($request->filled('event')) {
-            $query->where('event_type', 'like', "%" . $request->input('event') . "%");
-        }
+            // Filter by event
+            if ($request->filled('event')) {
+                $query->where('event_type', 'like', "%" . $request->input('event') . "%");
+            }
 
-        // Filter by date (created_at)
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->input('date'));
-        }
+            // Filter by date (created_at)
+            if ($request->filled('date')) {
+                $query->whereDate('created_at', $request->input('date'));
+            }
 
-        $messages = $query->latest()->paginate(20)->appends($request->all());
+            return $query->latest()->paginate(20)->appends($request->all());
+        });
+        
         return view('admin.message.messages', compact('messages'));
     }
 
@@ -50,7 +57,19 @@ class MessageController
 
         ContactMessage::create($validated);
 
+        // Clear all cached messages after creating new message
+        $this->clearMessageCache();
+
         return back()->with('status', 'Thank you! Your message has been saved.');
+    }
+
+    /**
+     * Clear all message-related cache
+     */
+    private function clearMessageCache(): void
+    {
+        // Clear all cached message data
+        cache()->flush();
     }
 }
 

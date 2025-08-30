@@ -11,7 +11,12 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $packages = Package::ordered()->get();
+        // Cache packages data for 120 seconds (2 minutes)
+        $packages = cache()->remember('admin_packages_list', 120, function () {
+            return Package::ordered()->get();
+        });
+        
+        
         return view('admin.packages.index', compact('packages'));
     }
 
@@ -44,6 +49,10 @@ class PackageController extends Controller
         }
 
         Package::create($validated);
+
+        // Clear cached packages data after creating new package
+        cache()->forget('admin_packages_list');
+        cache()->forget('public_packages_list');
 
         return redirect()->route('packages.index')
             ->with('success', 'Package created successfully!');
@@ -79,6 +88,10 @@ class PackageController extends Controller
 
         $package->update($validated);
 
+        // Clear cached packages data after updating package
+        cache()->forget('admin_packages_list');
+        cache()->forget('public_packages_list');
+
         return redirect()->route('packages.index')
             ->with('success', 'Package updated successfully!');
     }
@@ -86,6 +99,10 @@ class PackageController extends Controller
     public function destroy(Package $package)
     {
         $package->delete();
+
+        // Clear cached packages data after deleting package
+        cache()->forget('admin_packages_list');
+        cache()->forget('public_packages_list');
 
         return redirect()->route('packages.index')
             ->with('success', 'Package deleted successfully!');
@@ -95,24 +112,35 @@ class PackageController extends Controller
     {
         $package->update(['is_active' => !$package->is_active]);
 
+        // Clear cached packages data after status change
+        cache()->forget('admin_packages_list');
+        cache()->forget('public_packages_list');
+
         return redirect()->route('packages.index')
             ->with('success', 'Package status updated!');
     }
 
     public function publicPackages()
     {
-        $packages = Package::active()->ordered()->get();
-        $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
-        $photosByEvent = [];
-        foreach ($eventTypes as $type) {
-            $photosByEvent[$type] = Photo::active()->byEventType($type)->ordered()->get();
-        }
-        // Load contact info stored by admin
-        $contactInfoPath = storage_path('app/contact_info.json');
-        $contactInfo = [];
-        if (file_exists($contactInfoPath)) {
-            $contactInfo = json_decode(@file_get_contents($contactInfoPath), true) ?? [];
-        }
-        return view('welcome', compact('packages', 'eventTypes', 'photosByEvent', 'contactInfo'));
+        // Cache public packages and photos data for 300 seconds (5 minutes)
+        $data = cache()->remember('public_packages_data', 300, function () {
+            $packages = Package::active()->ordered()->get();
+            $eventTypes = ['Wedding', 'Corporate Event', 'Birthday Party', 'Graduation', 'Other'];
+            $photosByEvent = [];
+            foreach ($eventTypes as $type) {
+                $photosByEvent[$type] = Photo::active()->byEventType($type)->ordered()->get();
+            }
+            
+            // Load contact info stored by admin
+            $contactInfoPath = storage_path('app/contact_info.json');
+            $contactInfo = [];
+            if (file_exists($contactInfoPath)) {
+                $contactInfo = json_decode(@file_get_contents($contactInfoPath), true) ?? [];
+            }
+            
+            return compact('packages', 'eventTypes', 'photosByEvent', 'contactInfo');
+        });
+        
+        return view('welcome', $data);
     }
 }
