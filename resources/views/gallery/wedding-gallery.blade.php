@@ -629,14 +629,35 @@
           this.closeMenu();
         }
       });
+
+      // Auto-close on scroll and resize
+      window.addEventListener('scroll', this.handleScrollClose.bind(this), { passive: true });
+      window.addEventListener('resize', this.closeMenu.bind(this));
+
+      // Close after clicking any link inside the mobile menu
+      this.mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu());
+      });
     }
 
     toggleMenu() {
       this.mobileMenu.classList.toggle('hidden');
+      this.menuBtn && this.menuBtn.classList.toggle('active');
     }
 
     closeMenu() {
       this.mobileMenu.classList.add('hidden');
+      this.menuBtn && this.menuBtn.classList.remove('active');
+    }
+
+    isMenuOpen() {
+      return !this.mobileMenu.classList.contains('hidden');
+    }
+
+    handleScrollClose() {
+      if (this.isMenuOpen()) {
+        this.closeMenu();
+      }
     }
   }
 
@@ -670,6 +691,10 @@
       shape.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
     });
   });
+
+  // Prevent background scroll when any modal opens (reuse from welcome if exists)
+  function lockScroll(){ document.documentElement.classList.add('overflow-hidden'); document.body.classList.add('overflow-hidden'); }
+  function unlockScroll(){ document.documentElement.classList.remove('overflow-hidden'); document.body.classList.remove('overflow-hidden'); }
 </script>
 
 </body>

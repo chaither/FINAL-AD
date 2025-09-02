@@ -73,8 +73,9 @@ class PhotoController extends Controller
 
         Photo::create($validated);
 
-        // Clear cached photos data after creating new photo
+        // Clear caches so homepage and admin reflect the new photo
         cache()->forget('photos_index_data');
+        cache()->forget('public_packages_data');
 
         return redirect()->route('photos.index')
             ->with('success', 'Photo uploaded successfully!');
@@ -131,8 +132,9 @@ class PhotoController extends Controller
 
         $photo->update($validated);
 
-        // Clear cached photos data after updating photo
+        // Clear caches so homepage and admin reflect updates
         cache()->forget('photos_index_data');
+        cache()->forget('public_packages_data');
 
         return redirect()->route('photos.index')
             ->with('success', 'Photo updated successfully!');
@@ -147,8 +149,9 @@ class PhotoController extends Controller
 
         $photo->delete();
 
-        // Clear cached photos data after deleting photo
+        // Clear caches so homepage and admin reflect deletion
         cache()->forget('photos_index_data');
+        cache()->forget('public_packages_data');
 
         return redirect()->route('photos.index')
             ->with('success', 'Photo deleted successfully!');
@@ -158,8 +161,9 @@ class PhotoController extends Controller
     {
         $photo->update(['is_active' => !$photo->is_active]);
 
-        // Clear cached photos data after status change
+        // Clear caches so homepage and admin reflect status change
         cache()->forget('photos_index_data');
+        cache()->forget('public_packages_data');
 
         return redirect()->route('photos.index')
             ->with('success', 'Photo status updated!');
@@ -177,8 +181,9 @@ class PhotoController extends Controller
             Photo::where('id', $photoData['id'])->update(['sort_order' => $photoData['sort_order']]);
         }
 
-        // Clear cached photos data after reordering
+        // Clear caches so homepage and admin reflect new order
         cache()->forget('photos_index_data');
+        cache()->forget('public_packages_data');
 
         return response()->json(['success' => true]);
     }

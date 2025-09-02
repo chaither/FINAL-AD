@@ -497,15 +497,32 @@
       this.menuBtn.addEventListener('click', this.toggleMenu.bind(this));
       document.addEventListener('click', (e) => {
         if (!this.menuBtn.contains(e.target) && !this.mobileMenu.contains(e.target)) {
-          // ...
+          this.closeMenu();
         }
+      });
+      // Auto-close on scroll and resize
+      window.addEventListener('scroll', this.handleScrollClose.bind(this), { passive: true });
+      window.addEventListener('resize', this.closeMenu.bind(this));
+      // Close after clicking any link inside the mobile menu
+      this.mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu());
       });
     }
     toggleMenu() {
       this.mobileMenu.classList.toggle('hidden');
+      this.menuBtn && this.menuBtn.classList.toggle('active');
     }
     closeMenu() {
       this.mobileMenu.classList.add('hidden');
+      this.menuBtn && this.menuBtn.classList.remove('active');
+    }
+    isMenuOpen() {
+      return !this.mobileMenu.classList.contains('hidden');
+    }
+    handleScrollClose() {
+      if (this.isMenuOpen()) {
+        this.closeMenu();
+      }
     }
   }
   document.addEventListener('DOMContentLoaded', () => {

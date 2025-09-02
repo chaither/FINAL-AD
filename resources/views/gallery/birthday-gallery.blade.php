@@ -152,7 +152,7 @@
             @if($index % 2 == 0)
               <!-- Image with Parallax (Left) -->
               <div class="relative overflow-hidden rounded-2xl shadow-2xl">
-                <img src="{{ $photo->imageUrl }}" alt="{{ $photo->title }}" 
+                <img src="{{ $photo->image_url }}" alt="{{ $photo->title }}" 
                      class="parallax-image w-full h-96 lg:h-[500px] object-cover" 
                      data-speed="{{ 0.3 + ($index * 0.1) }}">
                 <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
@@ -196,7 +196,7 @@
               
               <!-- Image with Parallax (Right) -->
               <div class="relative overflow-hidden rounded-2xl shadow-2xl order-1 lg:order-2">
-                <img src="{{ $photo->imageUrl }}" alt="{{ $photo->title }}" 
+                <img src="{{ $photo->image_url }}" alt="{{ $photo->title }}" 
                      class="parallax-image w-full h-96 lg:h-[500px] object-cover" 
                      data-speed="{{ 0.3 + ($index * 0.1) }}">
                 <div class="absolute inset-0 bg-gradient-to-l from-primary/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
@@ -387,15 +387,32 @@
       this.menuBtn.addEventListener('click', this.toggleMenu.bind(this));
       document.addEventListener('click', (e) => {
         if (!this.menuBtn.contains(e.target) && !this.mobileMenu.contains(e.target)) {
-          // ...
+          this.closeMenu();
         }
+      });
+      // Auto-close on scroll and resize
+      window.addEventListener('scroll', this.handleScrollClose.bind(this), { passive: true });
+      window.addEventListener('resize', this.closeMenu.bind(this));
+      // Close after clicking any link inside the mobile menu
+      this.mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu());
       });
     }
     toggleMenu() {
       this.mobileMenu.classList.toggle('hidden');
+      this.menuBtn && this.menuBtn.classList.toggle('active');
     }
     closeMenu() {
       this.mobileMenu.classList.add('hidden');
+      this.menuBtn && this.menuBtn.classList.remove('active');
+    }
+    isMenuOpen() {
+      return !this.mobileMenu.classList.contains('hidden');
+    }
+    handleScrollClose() {
+      if (this.isMenuOpen()) {
+        this.closeMenu();
+      }
     }
   }
   document.addEventListener('DOMContentLoaded', () => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AD - Mirror Photo Booth Cebu City</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -184,7 +184,7 @@
   <div class="flex flex-col items-center text-center max-w-4xl mx-auto relative z-10">
     
     <!-- Enhanced Logo/Brand Section with 3D Effects -->
-    <div class="relative mb-8 group animate-on-scroll" data-aos="fade-up" data-aos-duration="1000">
+    <div class="relative mb-8 group animate-on-scroll mt-20" data-aos="fade-up" data-aos-duration="1000">
       <div class="relative inline-block transform-gpu hover:rotate-y-12 transition-transform duration-700">
         <img src="image/nalbu.png" alt="AD Logo" class="w-48 h-48 md:w-56 md:h-56 inline-block drop-shadow-2xl hover:scale-110 transition-all duration-500">
         <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-accent to-secondary rounded-full flex items-center justify-center animate-pulse-glow shadow-lg">
@@ -1053,15 +1053,47 @@
           ${p.description ? `<p class=\"text-sm text-gray-600\">${p.description}</p>` : ''}
         </div>`).join('')}</div>`;
     }
-    document.getElementById('publicEventModal').classList.remove('hidden');
+    const modal = document.getElementById('publicEventModal');
+    modal.classList.remove('hidden');
+    lockScroll();
   }
   function closePublicEventModal(){
-    document.getElementById('publicEventModal').classList.add('hidden');
+    const modal = document.getElementById('publicEventModal');
+    modal.classList.add('hidden');
+    unlockScroll();
   }
   document.getElementById('publicEventModal').addEventListener('click', function(e){
     if(e.target === this){ closePublicEventModal(); }
   });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') closePublicEventModal(); });
+
+  // Prevent background scroll when modal is open
+  let _scrollLock = { handler: null };
+  function lockScroll(){
+    document.documentElement.classList.add('overflow-hidden');
+    document.body.classList.add('overflow-hidden');
+    if(!_scrollLock.handler){
+      _scrollLock.handler = function(ev){
+        const modal = document.getElementById('publicEventModal');
+        if (modal && modal.contains(ev.target)) {
+          // Allow scroll inside modal content
+          return;
+        }
+        ev.preventDefault();
+      };
+      window.addEventListener('wheel', _scrollLock.handler, { passive: false });
+      window.addEventListener('touchmove', _scrollLock.handler, { passive: false });
+    }
+  }
+  function unlockScroll(){
+    document.documentElement.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden');
+    if(_scrollLock.handler){
+      window.removeEventListener('wheel', _scrollLock.handler, { passive: false });
+      window.removeEventListener('touchmove', _scrollLock.handler, { passive: false });
+      _scrollLock.handler = null;
+    }
+  }
 </script>
 
 <script>
@@ -1225,6 +1257,15 @@
           this.closeMenu();
         }
       });
+
+      // Auto-close on scroll and resize
+      window.addEventListener('scroll', this.handleScrollClose.bind(this), { passive: true });
+      window.addEventListener('resize', this.closeMenu.bind(this));
+
+      // Close after clicking any link inside the mobile menu
+      this.mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu());
+      });
     }
 
     toggleMenu() {
@@ -1235,6 +1276,16 @@
     closeMenu() {
       this.mobileMenu.classList.add('hidden');
       this.menuBtn.classList.remove('active');
+    }
+
+    isMenuOpen() {
+      return !this.mobileMenu.classList.contains('hidden');
+    }
+
+    handleScrollClose() {
+      if (this.isMenuOpen()) {
+        this.closeMenu();
+      }
     }
   }
 
