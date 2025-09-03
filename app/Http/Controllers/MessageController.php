@@ -64,6 +64,19 @@ class MessageController
     }
 
     /**
+     * Delete a message
+     */
+    public function destroy(ContactMessage $message): RedirectResponse
+    {
+        $message->delete();
+        
+        // Clear message cache after deletion
+        $this->clearMessageCache();
+        
+        return redirect()->route('messages.index')->with('success', 'Message deleted successfully.');
+    }
+
+    /**
      * Clear all message-related cache
      */
     private function clearMessageCache(): void

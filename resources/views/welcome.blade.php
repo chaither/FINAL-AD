@@ -4,6 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
+    <!-- 🔥 SEO META TAGS -->
+    <title>@yield('title', 'Mirror Photo Booth Cebu | Rent a Modern Photo Booth')</title>
+    <meta name="description" content="@yield('meta_description', 'Book our interactive Mirror Photo Booth in Cebu City for weddings, birthdays, and corporate events.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'photo booth cebu, mirror booth rental, wedding photobooth, event photobooth')">
+    <meta name="author" content="AD Mirror Photo Booth">
+    <meta name="robots" content="@yield('meta_robots', 'index, follow')">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="@yield('og_title', 'Mirror Photo Booth Cebu')">
+    <meta property="og:description" content="@yield('og_description', 'Interactive Mirror Photo Booth rental for unforgettable events in Cebu.')">
+    <meta property="og:image" content="@yield('og_image', asset('images/booth.jpg'))">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('twitter_title', 'Mirror Photo Booth Cebu')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Make your event unforgettable with our modern photo booth.')">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('images/booth.jpg'))">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ url()->current() }}">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -548,70 +571,16 @@
       </p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-white p-8 rounded-2xl shadow-lg">
-        <div class="flex items-center mb-4">
-          <div class="flex text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-          </div>
-        </div>
-        <p class="text-gray-600 mb-6">"Amazing photo booth experience! The quality was outstanding and our guests loved the instant prints. Highly recommend!"</p>
-        <div class="flex items-center">
-          <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold mr-4">
-            S
-          </div>
-          <div>
-            <div class="font-semibold text-gray-800">Sarah Johnson</div>
-            <div class="text-sm text-gray-600">Wedding Client</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white p-8 rounded-2xl shadow-lg">
-        <div class="flex items-center mb-4">
-          <div class="flex text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-          </div>
-        </div>
-        <p class="text-gray-600 mb-6">"Professional service from start to finish. The setup was seamless and the photos turned out perfect for our corporate event."</p>
-        <div class="flex items-center">
-          <div class="w-12 h-12 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center text-white font-bold mr-4">
-            M
-          </div>
-          <div>
-            <div class="font-semibold text-gray-800">Mike Chen</div>
-            <div class="text-sm text-gray-600">Corporate Client</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="bg-white p-8 rounded-2xl shadow-lg">
-        <div class="flex items-center mb-4">
-          <div class="flex text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-          </div>
-        </div>
-        <p class="text-gray-600 mb-6">"The best photo booth we've ever used! The props were hilarious and the social sharing feature was a huge hit with our guests."</p>
-        <div class="flex items-center">
-          <div class="w-12 h-12 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center text-white font-bold mr-4">
-            E
-          </div>
-          <div>
-            <div class="font-semibold text-gray-800">Emma Davis</div>
-            <div class="text-sm text-gray-600">Birthday Party</div>
-          </div>
+    <!-- Featured Feedback Display -->
+    <div id="featuredFeedbackContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Loading State -->
+      <div class="col-span-full text-center py-12">
+        <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-gradient-to-r from-primary to-secondary">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Loading featured feedback...
         </div>
       </div>
     </div>
@@ -762,15 +731,33 @@
         <div class="pt-6">
           <h4 class="text-lg font-semibold mb-4">Follow Us</h4>
           <div class="flex space-x-4">
-            <a href= " https://www.facebook.com/profile.php?id=61565882637150    " class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
-              <i class="fab fa-facebook-f text-white"></i>
-            </a>
-            <a href="https://www.instagram.com/" class="w-10 h-10 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
-              <i class="fab fa-instagram text-white"></i>
-            </a>
-            <a href="https://x.com/" class="w-10 h-10 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
-              <i class="fab fa-twitter text-white"></i>
-            </a>
+            @php
+              $contactInfoPath = storage_path('app/contact_info.json');
+              $socialLinks = [];
+              if (file_exists($contactInfoPath)) {
+                $contactData = json_decode(file_get_contents($contactInfoPath), true);
+                $socialLinks = $contactData['social_links'] ?? [];
+              }
+            @endphp
+            
+            @if(!empty($socialLinks))
+              @foreach($socialLinks as $social)
+                <a href="{{ $social['url'] }}" target="_blank" class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                  <i class="fab fa-{{ $social['icon'] ?? 'globe' }} text-white"></i>
+                </a>
+              @endforeach
+            @else
+              <!-- Fallback to default social links if none configured -->
+              <a href="https://www.facebook.com/profile.php?id=61565882637150" class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                <i class="fab fa-facebook-f text-white"></i>
+              </a>
+              <a href="https://www.instagram.com/" class="w-10 h-10 bg-gradient-to-r from-secondary to-accent rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                <i class="fab fa-instagram text-white"></i>
+              </a>
+              <a href="https://x.com/" class="w-10 h-10 bg-gradient-to-r from-accent to-primary rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                <i class="fab fa-twitter text-white"></i>
+              </a>
+            @endif
           </div>
         </div>
       </div>
@@ -1121,6 +1108,69 @@
     if (e.target === modal) closeFeedbackOverviewModal();
   });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeFeedbackOverviewModal(); });
+
+  // Load featured feedback for welcome page
+  async function loadFeaturedFeedback() {
+    const container = document.getElementById('featuredFeedbackContainer');
+    if (!container) return;
+    
+    try {
+      const response = await fetch('/feedback/featured');
+      const feedback = await response.json();
+      
+      if (feedback.length === 0) {
+        // Show fallback testimonials if no featured feedback
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Featured Feedback Yet</h3>
+            <p class="text-gray-600">Our featured client testimonials will appear here soon!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Display featured feedback
+      container.innerHTML = feedback.map(item => `
+        <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          <div class="flex items-center mb-4">
+            <div class="flex text-yellow-400">
+              ${generateStars(item.rating)}
+            </div>
+          </div>
+          <p class="text-gray-600 mb-6">"${item.comment}"</p>
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-white font-bold mr-4">
+              ${item.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div class="font-semibold text-gray-800">${item.name}</div>
+              <div class="text-sm text-gray-600">${item.email ? 'Verified Client' : 'Anonymous Client'}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+    } catch (error) {
+      console.error('Error loading featured feedback:', error);
+      // Show error state
+      container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Error Loading Feedback</h3>
+          <p class="text-gray-600">Something went wrong. Please try again later.</p>
+        </div>
+      `;
+    }
+  }
 
   // Load feedback data
   async function loadFeedbackData() {
@@ -1481,6 +1531,9 @@
     }
     // Add loading animation
     document.body.classList.add('loaded');
+
+    // Load featured feedback for testimonials section
+    loadFeaturedFeedback();
 
     // Auto-open feedback modal on redirect with status/errors
     try {

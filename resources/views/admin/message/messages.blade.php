@@ -48,6 +48,10 @@
     </header>
 
         <div class="relative max-w-6xl mx-auto p-6">
+            @if(session('success'))
+                <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">{{ session('success') }}</div>
+            @endif
+            
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-extrabold tracking-tight text-primary drop-shadow-sm flex items-center gap-2">
                     <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 10.5l-9 5-9-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -146,6 +150,7 @@
                                     <td class="px-4 py-3 whitespace-nowrap">
                                         <button type="button"
                                             class="open-message text-black hover:underline font-semibold"
+                                            data-id="{{ $msg->id }}"
                                             data-name="{{ $msg->first_name }} {{ $msg->last_name }}"
                                             data-email="{{ $msg->email }}"
                                             data-phone="{{ $msg->phone }}"
@@ -213,6 +218,8 @@
                         <p class="leading-relaxed text-gray-800 whitespace-pre-wrap" id="modalMessage"></p>
                     </div>
                     <div class="mt-6 flex items-center justify-end gap-3">
+                        <!-- Delete Button -->
+                        <button id="modalDelete" type="button" class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors">Delete Message</button>
                         <!-- Save Note Button -->
                         <button id="modalSaveNote" type="button" class="px-4 py-2 rounded-lg bg-gradient-to-r from-primary via-secondary to-accent text-white">Save Note</button>
                         <a id="modalReply" href="#"></a>
@@ -222,6 +229,11 @@
                             @csrf
                             <input type="hidden" name="title" id="pinTitle">
                             <input type="hidden" name="note" id="pinNote">
+                        </form>
+                        <!-- Hidden form for deleting message -->
+                        <form id="deleteMessageForm" action="" method="POST" class="hidden">
+                            @csrf
+                            @method('DELETE')
                         </form>
                     </div>
                 </div>
@@ -295,7 +307,9 @@
                 const messageEl = document.getElementById('modalMessage');
                 const replyEl = document.getElementById('modalReply');
                 const saveNoteBtn = document.getElementById('modalSaveNote');
+                const deleteBtn = document.getElementById('modalDelete');
                 const saveNoteForm = document.getElementById('saveNoteForm');
+                const deleteMessageForm = document.getElementById('deleteMessageForm');
                 const pinTitleInput = document.getElementById('pinTitle');
                 const pinNoteInput = document.getElementById('pinNote');
 
@@ -310,16 +324,24 @@
                     if (data.email) replyEl.href = `mailto:${data.email}`; else replyEl.removeAttribute('href');
                     modal.classList.remove('hidden');
                     document.body.classList.add('overflow-hidden');
+                    
                     // Store current modal data for Save Note
                     // Title: Name (Event)
                     // Note: Message content
                     saveNoteBtn.dataset.title = data.name ? `${data.name} (${data.event || ''})` : 'Note';
                     // Combine message for display in pin note
                     saveNoteBtn.dataset.note = (data.message ? data.message : '') + (data.email ? `\nEmail: ${data.email}` : '') + (data.phone ? `\nPhone: ${data.phone}` : '');
+                    
+                    // Set up delete form action
+                    if (data.id) {
+                        deleteMessageForm.action = `/admin/messages/${data.id}`;
+                        deleteBtn.dataset.messageId = data.id;
+                    }
                 };
 
                 openButtons.forEach(btn => btn.addEventListener('click', () => {
                     openModal({
+                        id: btn.dataset.id,
                         name: btn.dataset.name,
                         email: btn.dataset.email,
                         phone: btn.dataset.phone,
@@ -339,6 +361,16 @@
                     pinTitleInput.value = this.dataset.title || nameEl.textContent;
                     pinNoteInput.value = this.dataset.note || messageEl.textContent;
                     saveNoteForm.submit();
+                });
+                
+                // Delete Message logic
+                deleteBtn.addEventListener('click', function() {
+                    const messageId = this.dataset.messageId;
+                    const messageName = nameEl.textContent;
+                    
+                    if (confirm(`Are you sure you want to delete the message from ${messageName}? This action cannot be undone.`)) {
+                        deleteMessageForm.submit();
+                    }
                 });
             });
         </script>

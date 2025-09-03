@@ -72,7 +72,7 @@
       @endphp
 
       <!-- Display contact info -->
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
   <div class="p-5 rounded-xl bg-gradient-to-br from-primary/5 to-white ring-1 ring-primary/10 shadow-sm">
     <div class="text-sm font-semibold mb-1 text-gray-700">📞 Phone</div>
     @php
@@ -108,10 +108,38 @@
 
       <hr class="my-6 border-gray-300" />
 
+      <!-- Social Media Links Section -->
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Social Media Links</h3>
+        
+        <!-- Display current social links -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          @if(isset($contactInfo['social_links']) && is_array($contactInfo['social_links']))
+            @foreach($contactInfo['social_links'] as $index => $social)
+              <div class="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white ring-1 ring-gray-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-2">
+                  <i class="fab fa-{{ $social['icon'] ?? 'globe' }} text-lg text-primary"></i>
+                  <span class="font-medium text-gray-700">{{ $social['platform'] ?? 'Social Media' }}</span>
+                </div>
+                <a href="{{ $social['url'] ?? '#' }}" target="_blank" class="text-sm text-primary hover:underline break-all">
+                  {{ $social['url'] ?? 'No URL set' }}
+                </a>
+              </div>
+            @endforeach
+          @else
+            <div class="col-span-full text-center text-gray-500 py-4">No social media links configured yet.</div>
+          @endif
+        </div>
+      </div>
+
+      <hr class="my-6 border-gray-300" />
+
       <!-- Form -->
       <form method="POST" action="{{ route('contact-info.update') }}" class="space-y-6">
         @csrf
         @method('PUT')
+        
+        <!-- Basic Contact Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <label class="block text-sm mb-2 font-medium text-gray-700">Phone</label>
@@ -129,14 +157,196 @@
                    class="w-full border rounded-lg p-2 ring-1 ring-gray-300 focus:ring-2 focus:ring-accent focus:outline-none" />
           </div>
         </div>
+
+        <!-- Social Media Links Form -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-md font-semibold text-gray-700">Social Media Links</h4>
+            <button type="button" id="addSocialLink" class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary/80 transition">
+              + Add Link
+            </button>
+          </div>
+          
+          <div id="socialLinksContainer" class="space-y-3">
+            @if(isset($contactInfo['social_links']) && is_array($contactInfo['social_links']))
+              @foreach($contactInfo['social_links'] as $index => $social)
+                <div class="social-link-row flex gap-3 items-end p-3 bg-gray-50 rounded-lg">
+                  <div class="flex-1">
+                    <label class="block text-xs text-gray-600 mb-1">Platform</label>
+                    <input name="social_links[{{ $index }}][platform]" type="text" value="{{ $social['platform'] ?? '' }}" 
+                           placeholder="e.g., Facebook, Instagram, Twitter" 
+                           class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                  </div>
+                  <div class="flex-1">
+                    <label class="block text-xs text-gray-600 mb-1">URL</label>
+                    <input name="social_links[{{ $index }}][url]" type="url" value="{{ $social['url'] ?? '' }}" 
+                           placeholder="https://..." 
+                           class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                  </div>
+                  <div class="w-24">
+                    <label class="block text-xs text-gray-600 mb-1">Icon</label>
+                    <input name="social_links[{{ $index }}][icon]" type="text" value="{{ $social['icon'] ?? '' }}" 
+                           placeholder="facebook-f" 
+                           class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                  </div>
+                  <button type="button" class="remove-social-link px-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              @endforeach
+            @endif
+          </div>
+        </div>
+
+        <hr class="my-6 border-gray-300" />
+
+        <!-- Gallery Previews Form -->
+        @php
+          $eventOptions = ['Wedding','Corporate Event','Birthday Party','Graduation','Other'];
+          $gp = $contactInfo['gallery_previews'] ?? [];
+        @endphp
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-md font-semibold text-gray-700">Gallery Event Previews (Card media)</h4>
+            <button type="button" id="addPreviewRow" class="px-3 py-1.5 text-sm bg-primary text-white rounded-lg hover:bg-primary/80 transition">+ Add Preview</button>
+          </div>
+          <div id="previewRows" class="space-y-3">
+            @foreach($gp as $event => $info)
+              <div class="preview-row grid grid-cols-1 md:grid-cols-5 gap-3 p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <label class="block text-xs text-gray-600 mb-1">Event</label>
+                  <input name="gallery_previews[{{ $loop->index }}][event]" type="text" value="{{ $event }}" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-600 mb-1">Type</label>
+                  <select name="gallery_previews[{{ $loop->index }}][type]" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none">
+                    <option value="image" {{ ($info['type'] ?? '')==='image' ? 'selected' : '' }}>Image</option>
+                    <option value="video" {{ ($info['type'] ?? '')==='video' ? 'selected' : '' }}>Video</option>
+                  </select>
+                </div>
+                <div class="md:col-span-2">
+                  <label class="block text-xs text-gray-600 mb-1">URL (image src or video src)</label>
+                  <input name="gallery_previews[{{ $loop->index }}][url]" type="text" value="{{ $info['url'] ?? '' }}" placeholder="https://... or /storage/..." class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-600 mb-1">Poster (optional)</label>
+                  <input name="gallery_previews[{{ $loop->index }}][poster]" type="text" value="{{ $info['poster'] ?? '' }}" placeholder="Video poster image URL" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+                </div>
+                <button type="button" class="remove-preview px-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition md:col-span-5 justify-self-start"><i class="fas fa-trash"></i></button>
+              </div>
+            @endforeach
+          </div>
+        </div>
+
         <div class="text-right">
           <button type="submit" class="px-6 py-2 rounded-xl bg-gradient-to-r from-primary via-secondary to-accent text-white font-semibold shadow hover:opacity-90 transition">
-            Save
+            Save Changes
           </button>
         </div>
       </form>
     </div>
   </div>
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const addButton = document.getElementById('addSocialLink');
+      const container = document.getElementById('socialLinksContainer');
+      let linkIndex = {{ isset($contactInfo['social_links']) ? count($contactInfo['social_links']) : 0 }};
+
+      // Add new social link row
+      if (addButton) {
+        addButton.addEventListener('click', function() {
+          const newRow = document.createElement('div');
+          newRow.className = 'social-link-row flex gap-3 items-end p-3 bg-gray-50 rounded-lg';
+          newRow.innerHTML = `
+            <div class="flex-1">
+              <label class="block text-xs text-gray-600 mb-1">Platform</label>
+              <input name="social_links[${linkIndex}][platform]" type="text" 
+                     placeholder="e.g., Facebook, Instagram, Twitter" 
+                     class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs text-gray-600 mb-1">URL</label>
+              <input name="social_links[${linkIndex}][url]" type="url" 
+                     placeholder="https://..." 
+                     class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <div class="w-24">
+              <label class="block text-xs text-gray-600 mb-1">Icon</label>
+              <input name="social_links[${linkIndex}][icon]" type="text" 
+                     placeholder="facebook-f" 
+                     class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <button type="button" class="remove-social-link px-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+              <i class="fas fa-trash"></i>
+            </button>
+          `;
+          
+          container.appendChild(newRow);
+          linkIndex++;
+          
+          // Add event listener to the new remove button
+          newRow.querySelector('.remove-social-link').addEventListener('click', function() {
+            container.removeChild(newRow);
+          });
+        });
+      }
+
+      // Remove social link row (for existing rows)
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-social-link')) {
+          const row = e.target.closest('.social-link-row');
+          if (row) {
+            container.removeChild(row);
+          }
+        }
+      });
+
+      // Gallery Previews dynamic rows
+      const addPreviewBtn = document.getElementById('addPreviewRow');
+      const previewsContainer = document.getElementById('previewRows');
+      let previewIndex = {{ isset($contactInfo['gallery_previews']) && is_array($contactInfo['gallery_previews']) ? count($contactInfo['gallery_previews']) : 0 }};
+      if (addPreviewBtn) {
+        addPreviewBtn.addEventListener('click', function() {
+          const row = document.createElement('div');
+          row.className = 'preview-row grid grid-cols-1 md:grid-cols-5 gap-3 p-3 bg-gray-50 rounded-lg';
+          row.innerHTML = `
+            <div>
+              <label class="block text-xs text-gray-600 mb-1">Event</label>
+              <input name="gallery_previews[${previewIndex}][event]" type="text" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-600 mb-1">Type</label>
+              <select name="gallery_previews[${previewIndex}][type]" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none">
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-xs text-gray-600 mb-1">URL (image src or video src)</label>
+              <input name="gallery_previews[${previewIndex}][url]" type="text" placeholder="https://... or /storage/..." class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs text-gray-600 mb-1">Poster (optional)</label>
+              <input name="gallery_previews[${previewIndex}][poster]" type="text" placeholder="Video poster image URL" class="w-full border rounded-lg p-2 text-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary focus:outline-none" />
+            </div>
+            <button type="button" class="remove-preview px-2 py-2 text-red-500 hover:bg-red-50 rounded-lg transition md:col-span-5 justify-self-start"><i class="fas fa-trash"></i></button>
+          `;
+          previewsContainer.appendChild(row);
+          previewIndex++;
+        });
+      }
+      document.addEventListener('click', function(e){
+        if (e.target.closest('.remove-preview')) {
+          const row = e.target.closest('.preview-row');
+          if (row && previewsContainer.contains(row)) previewsContainer.removeChild(row);
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

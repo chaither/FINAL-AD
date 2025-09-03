@@ -60,14 +60,6 @@
             <div class="bg-white/80 backdrop-blur ring-1 ring-gray-200 rounded-2xl p-3 sticky top-24">
                 <a href="{{ route('admin.dashboard') }}" class="w-full mb-2 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-primary via-secondary to-accent block text-center">Dashboard</a>
                 <nav class="text-sm">
-                    <a href="{{ route('messages.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
-                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M2.94 6.34A2 2 0 014.6 5h10.8a2 2 0 011.66.94L10 11.5 2.94 6.34zM2 7.92V14a2 2 0 002 2h12a2 2 0 002-2V7.92l-7.4 4.93a2 2 0 01-2.2 0L2 7.92z"/></svg></span>
-                        Inbox
-                    </a>
-                    <a href="{{ route('pins.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
-                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-accent" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 012 0v5h4a1 1 0 010 2h-4v5a1 1 0 11-2 0V9H5a1 1 0 010-2h4V2z"/></svg></span>
-                        Pins
-                    </a>
                     <a href="{{ route('packages.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
                         <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 3h4v2H6V7zm0 3h8v2H6v-2z"/></svg></span>
                         Packages
@@ -75,6 +67,10 @@
                     <a href="{{ route('photos.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium">
                         <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/></svg></span>
                         Photos
+                    </a>
+                     <a href="{{ route('feedback.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg></span>
+                         Feedback
                     </a>
                 </nav>
             </div>
@@ -268,6 +264,17 @@
         </div>
     </div>
 
+    <!-- Image Viewer (Lightbox) Modal -->
+    <div id="imageViewerModal" class="fixed inset-0 z-[60] hidden">
+        <div id="imageViewerBackdrop" class="absolute inset-0 bg-black/90 backdrop-blur-sm"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <button class="absolute top-6 right-6 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition" onclick="closeImageViewer()" aria-label="Close image viewer">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <img id="imageViewerImg" src="" alt="" class="max-h-[85vh] max-w-[90vw] rounded-xl shadow-2xl" />
+        </div>
+    </div>
+
     <script>
         // Event Modal Functions
         function openEventModal(eventType) {
@@ -338,7 +345,7 @@
             const photosHTML = photos.map(photo => `
                 <div class="bg-gray-50 rounded-lg p-4">
                     <div class="aspect-w-16 aspect-h-9 mb-4">
-                        <img src="${photo.image_url || '/storage/' + photo.image_path}" alt="${photo.title}" class="w-full h-48 object-cover rounded-lg">
+                        <img src="${photo.image_url || '/storage/' + photo.image_path}" alt="${photo.title}" class="w-full h-48 object-cover rounded-lg cursor-zoom-in js-zoom-img" data-url="${photo.image_url || '/storage/' + photo.image_path}">
                     </div>
                     <h4 class="font-semibold text-gray-900 mb-2">${photo.title}</h4>
                     ${photo.description ? `<p class="text-gray-600 text-sm mb-3">${photo.description}</p>` : ''}
@@ -372,6 +379,13 @@
                     ${photosHTML}
                 </div>
             `;
+
+            // Wire zoom handlers
+            modalPhotos.querySelectorAll('.js-zoom-img').forEach(function(img) {
+                img.addEventListener('click', function() {
+                    openImageViewer(img.dataset.url, img.getAttribute('alt') || '');
+                });
+            });
         }
 
         // Close modal when clicking outside
@@ -385,6 +399,7 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeEventModal();
+                closeImageViewer();
             }
         });
 
@@ -399,6 +414,28 @@
         }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
         
         document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    </script>
+
+    <script>
+        function openImageViewer(url, title) {
+            const modal = document.getElementById('imageViewerModal');
+            const img = document.getElementById('imageViewerImg');
+            img.src = url;
+            img.alt = title || '';
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            const backdrop = document.getElementById('imageViewerBackdrop');
+            if (backdrop) { backdrop.onclick = closeImageViewer; }
+        }
+
+        function closeImageViewer() {
+            const modal = document.getElementById('imageViewerModal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            const img = document.getElementById('imageViewerImg');
+            img.src = '';
+            modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
     </script>
 </body>
 </html>

@@ -81,8 +81,10 @@
                 <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center font-bold text-primary">AD</div>
                 
             </div>
-           
-            <div class="ml-auto flex items-center gap-4 text-sm">
+            <button id="menuToggle" class="md:hidden ml-auto inline-flex items-center justify-center p-2 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50" aria-label="Open menu" aria-expanded="false">
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm1 4a1 1 0 100 2h12a1 1 0 100-2H4z" clip-rule="evenodd"/></svg>
+            </button>
+            <div class="hidden md:flex ml-auto items-center gap-4 text-sm">
                 <span class="text-gray-700">Hi, {{ auth()->user()->name }}</span>
                 <form method="POST" action="{{ route('admin.logout') }}">
                     @csrf
@@ -93,8 +95,15 @@
     </header>
 
     <div class="max-w-7xl mx-auto px-4 py-6 flex gap-6">
-        <aside class="w-64 shrink-0">
-            <div class="bg-white/80 backdrop-blur ring-1 ring-gray-200 rounded-2xl p-3 sticky top-24">
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-40 hidden md:hidden"></div>
+        <aside id="sidebar" class="w-64 shrink-0 z-50 md:z-auto md:static md:translate-x-0 fixed md:block -translate-x-full top-0 bottom-0 left-0 p-4 md:p-0 bg-white/80 md:bg-transparent backdrop-blur md:backdrop-blur-0 ring-0 md:ring-0 transition-transform duration-200 ease-out">
+            <div class="bg-white/80 backdrop-blur ring-1 ring-gray-200 rounded-2xl p-3 sticky md:top-24 top-4">
+                <div class="md:hidden mb-2 flex items-center justify-between">
+                    <div class="text-sm text-gray-700">Hi, {{ auth()->user()->name }}</div>
+                    <button id="menuClose" class="inline-flex items-center justify-center p-2 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50" aria-label="Close menu">
+                        <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                    </button>
+                </div>
                 <button class="w-full mb-2 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-primary via-secondary to-accent">Notifications</button>
                 <nav class="text-sm">
                     <a href="{{ route('messages.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
@@ -115,6 +124,12 @@
                     </a>
                     
                 </nav>
+                <div class="md:hidden mt-3">
+                    <form method="POST" action="{{ route('admin.logout') }}">
+                        @csrf
+                        <button class="w-full px-3 py-2 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50 text-sm">Logout</button>
+                    </form>
+                </div>
             </div>
         </aside>
         <main class="flex-1 space-y-8">
@@ -239,6 +254,10 @@
         const elements = Array.from(document.querySelectorAll('.parallax-element'));
         const mouseEls = Array.from(document.querySelectorAll('.mouse-parallax'));
         const tiltEls = Array.from(document.querySelectorAll('.tilt'));
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const menuClose = document.getElementById('menuClose');
         let mouseX = 0, mouseY = 0;
         const update = () => {
           const y = window.scrollY || window.pageYOffset;
@@ -280,6 +299,25 @@
           });
         });
         tiltEls.forEach(el => el.addEventListener('mouseleave', () => { el.style.transform = 'rotateX(0deg) rotateY(0deg)'; }));
+
+        const openMenu = () => {
+          if (!sidebar) return;
+          sidebar.style.transform = 'translateX(0)';
+          if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
+          if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden';
+        };
+        const closeMenu = () => {
+          if (!sidebar) return;
+          sidebar.style.transform = '';
+          if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+          if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = '';
+        };
+        if (menuToggle) menuToggle.addEventListener('click', openMenu);
+        if (menuClose) menuClose.addEventListener('click', closeMenu);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMenu);
+        window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
       });
     </script>

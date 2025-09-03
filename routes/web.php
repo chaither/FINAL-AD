@@ -16,6 +16,7 @@ Route::post('/messages', [MessageController::class, 'store'])->name('messages.st
 // Public feedback submission
 Route::post('/feedback', [FeedbackController::class, 'storePublic'])->name('feedback.storePublic');
 Route::get('/feedback/overview', [FeedbackController::class, 'getPublicFeedback'])->name('feedback.getPublic');
+Route::get('/feedback/featured', [FeedbackController::class, 'getFeaturedFeedback'])->name('feedback.featured');
 
 Route::get('/gallery/wedding', function () {
     return view('gallery.wedding-gallery');
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     // Feedback management
     Route::get('/admin/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::delete('/admin/feedback/{feedback}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
+    Route::post('/admin/feedback/{feedback}/toggle-featured', [FeedbackController::class, 'toggleFeatured'])->name('feedback.toggle-featured');
     Route::get('/dashboard', [AdminAuthController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     
@@ -48,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
     // Messages (admin)
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::delete('/admin/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 
     // Pins
     Route::get('/pins', [PinController::class, 'index'])->name('pins.index');
