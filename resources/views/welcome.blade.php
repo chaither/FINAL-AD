@@ -93,6 +93,12 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
+  <style>
+    /* Public Image Viewer Animations */
+    .image-viewer-img { transition: transform .25s ease, opacity .25s ease; transform: scale(.92); opacity: 0; }
+    .image-viewer-img.enter { transform: scale(1); opacity: 1; }
+    .image-viewer-img.exit { transform: scale(.8); opacity: 0; }
+  </style>
 </head>
 <body class="relative min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 overflow-x-hidden font-inter">
 
@@ -981,6 +987,17 @@
   </div>
 </div>
 
+<!-- Public Image Viewer (Lightbox) -->
+<div id="publicImageViewer" class="fixed inset-0 z-[60] hidden">
+  <div id="publicImageBackdrop" class="absolute inset-0 bg-black/90 backdrop-blur-sm"></div>
+  <div class="relative min-h-screen flex items-center justify-center p-4">
+    <button class="absolute top-6 right-6 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition" onclick="closePublicImageViewer()" aria-label="Close image viewer">
+      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <img id="publicImageViewerImg" src="" alt="" class="max-h-[85vh] max-w-[90vw] rounded-xl shadow-2xl image-viewer-img" />
+  </div>
+</div>
+
 <style>
   .float-slow { animation: float 6s ease-in-out infinite; }
   @keyframes float { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-15px);} }
@@ -1035,7 +1052,7 @@
       empty.classList.add('hidden');
       container.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">${photos.map(p => `
         <div class=\"bg-gray-50 rounded-lg p-3\">
-          <img src=\"${p.image_url || ('/storage/' + p.image_path)}\" alt=\"${p.title || ''}\" class=\"w-full h-48 object-cover rounded-md mb-3\">
+          <img src=\"${p.image_url || ('/storage/' + p.image_path)}\" alt=\"${p.title || ''}\" class=\"w-full h-48 object-cover rounded-md mb-3 cursor-zoom-in public-zoom-img\" data-url=\"${p.image_url || ('/storage/' + p.image_path)}\" data-title=\"${(p.title || '').replaceAll('\\"','&quot;')}\"> 
           ${p.title ? `<h4 class=\"font-semibold text-gray-900\">${p.title}</h4>` : ''}
           ${p.description ? `<p class=\"text-sm text-gray-600\">${p.description}</p>` : ''}
         </div>`).join('')}</div>`;
@@ -1049,6 +1066,29 @@
     modal.classList.add('hidden');
     unlockScroll();
   }
+  // Lightbox open/close
+  function openPublicImageViewer(url, title){
+    const modal = document.getElementById('publicImageViewer');
+    const img = document.getElementById('publicImageViewerImg');
+    img.src = url; img.alt = title || '';
+    modal.classList.remove('hidden');
+    requestAnimationFrame(()=>{ img.classList.add('enter'); });
+  }
+  function closePublicImageViewer(){
+    const modal = document.getElementById('publicImageViewer');
+    if (!modal || modal.classList.contains('hidden')) return;
+    const img = document.getElementById('publicImageViewerImg');
+    img.classList.remove('enter'); img.classList.add('exit');
+    setTimeout(()=>{ modal.classList.add('hidden'); img.classList.remove('exit'); img.src=''; }, 200);
+  }
+  document.addEventListener('click', (e)=>{
+    const backdrop = document.getElementById('publicImageBackdrop');
+    if (e.target === backdrop) closePublicImageViewer();
+    if (e.target.classList && e.target.classList.contains('public-zoom-img')){
+      openPublicImageViewer(e.target.dataset.url, e.target.dataset.title || e.target.alt || '');
+    }
+  });
+  document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') closePublicImageViewer(); });
   document.getElementById('publicEventModal').addEventListener('click', function(e){
     if(e.target === this){ closePublicEventModal(); }
   });
