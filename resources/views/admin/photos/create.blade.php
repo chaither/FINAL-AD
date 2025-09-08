@@ -449,7 +449,12 @@
             if (menuToggle) {
                 menuToggle.addEventListener('click', (e) => {
                     e.preventDefault();
-                    openMobileMenu();
+                    const isOpen = sidebar.classList.contains('open');
+                    if (isOpen) {
+                        closeMobileMenu();
+                    } else {
+                        openMobileMenu();
+                    }
                 });
             }
             

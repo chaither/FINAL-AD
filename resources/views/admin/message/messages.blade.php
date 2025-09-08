@@ -229,16 +229,7 @@
         </div>
     </aside>
                 
-                <!-- Mobile Logout -->
-                <div class="md:hidden mt-6 pt-4 border-t border-gray-200">
-                    <form method="POST" action="{{ route('admin.logout') }}">
-                        @csrf
-                        <button class="w-full px-3 py-2.5 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50 text-sm font-medium transition-colors">
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
+               
         </aside>
 
         <div class="relative max-w-6xl mx-auto p-6">
@@ -353,7 +344,7 @@
                                             data-email="{{ $msg->email }}"
                                             data-phone="{{ $msg->phone }}"
                                             data-event="{{ $msg->event_type }}"
-                                            data-message="{{ $msg->message }}"
+                                            data-message="{{ e($msg->message) }}"
                                             data-created="{{ $msg->created_at->format('Y-m-d H:i') }}">
                                             {{ $msg->first_name }} {{ $msg->last_name }}
                                         </button>
@@ -390,7 +381,7 @@
         </div>
 
         <!-- Message Modal -->
-        <div id="messageModal" class="fixed inset-0 z-50 hidden">
+        <div id="messageModal" class="fixed inset-0 z-[70] hidden">
             <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" data-close-modal></div>
             <div class="relative max-w-2xl mx-auto mt-20 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-primary/10 overflow-hidden">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-primary/20 to-secondary/30 rounded-full blur-2xl z-0 parallax-float" data-speed="0.18"></div>
@@ -420,9 +411,9 @@
                             <div class="font-medium" id="modalCreated">—</div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg p-5 ring-1 ring-gray-200">
+                    <div class="bg-white rounded-lg p-5 ring-1 ring-gray-200 max-h-[60vh] overflow-y-auto">
                         <div class="text-xs text-gray-500 mb-2">Message</div>
-                        <p class="leading-relaxed text-gray-800 whitespace-pre-wrap" id="modalMessage"></p>
+                        <p class="leading-relaxed text-gray-800 whitespace-pre-wrap break-words select-text" id="modalMessage"></p>
                     </div>
                     <div class="mt-6 flex items-center justify-end gap-3">
                         <!-- Delete Button -->
@@ -591,6 +582,7 @@
                     createdEl.textContent = data.created || '—';
                     messageEl.textContent = data.message || '';
                     if (data.email) replyEl.href = `mailto:${data.email}`; else replyEl.removeAttribute('href');
+                    try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch(_) { window.scrollTo(0, 0); }
                     modal.classList.remove('hidden');
                     document.body.classList.add('overflow-hidden');
                     

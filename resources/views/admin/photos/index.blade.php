@@ -195,76 +195,67 @@
     
     <!-- Main Layout -->
     <div class="max-w-7xl mx-auto px-4 py-6 flex gap-6">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="mobile-menu fixed md:static md:translate-x-0 top-0 bottom-0 left-0 w-64 z-50 md:z-auto bg-white/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 md:block">
-            <div class="bg-white/90 md:bg-white/80 backdrop-blur-md ring-1 ring-gray-200 rounded-2xl p-4 md:p-3 h-full md:h-auto md:sticky md:top-24">
+        <!-- Mobile Sidebar -->
+        <aside id="sidebar" class="mobile-menu fixed left-0 top-0 h-full w-80 bg-white shadow-xl z-50 md:hidden">
+            <div class="p-4 border-b border-gray-200">
                 <!-- Mobile Header -->
-                <div class="md:hidden mb-4 flex items-center justify-between border-b border-gray-200 pb-3">
+                <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center font-bold text-primary text-sm">
                             AD
                         </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</div>
-                            <div class="text-xs text-gray-500">Administrator</div>
-                        </div>
+                        <span class="font-semibold text-gray-900">Menu</span>
                     </div>
-                    <button id="menuClose" class="inline-flex items-center justify-center p-2 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50 transition-colors" aria-label="Close menu">
+                    <button id="menuClose" class="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Close menu">
                         <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                         </svg>
                     </button>
                 </div>
-                
-                <!-- Dashboard Button -->
-                <a href="{{ route('admin.dashboard') }}" class="w-full mb-4 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-primary via-secondary to-accent hover:shadow-lg transition-shadow text-center block">
-                    <div class="flex items-center justify-center gap-2">
-                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                        </svg>
-                        Dashboard
-                    </div>
-                </a>
-                
-                <!-- Navigation -->
-                <nav class="space-y-1">
-                    <a href="{{ route('packages.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/5 text-gray-700 transition-colors group">
-                        <span class="inline-flex w-5">
-                            <svg class="w-5 h-5 text-primary group-hover:text-primary/80" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M4 4a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 3h4v2H6V7zm0 3h8v2H6v-2z"/>
-                            </svg>
-                        </span>
-                        <span class="font-medium">Packages</span>
+            </div>
+            <div class="p-4">
+                <a href="{{ route('admin.dashboard') }}" class="w-full mb-3 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-primary via-secondary to-accent block text-center text-sm">Dashboard</a>
+                <nav class="space-y-2">
+                    <a href="{{ route('packages.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700 text-sm">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 3h4v2H6V7zm0 3h8v2H6v-2z"/></svg></span>
+                        Packages
                     </a>
-                    
-                    <a href="{{ route('photos.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary font-medium">
-                        <span class="inline-flex w-5">
-                            <svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
-                            </svg>
-                        </span>
-                        <span class="font-medium">Photos</span>
+                    <a href="{{ route('photos.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium text-sm">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/></svg></span>
+                        Photos
                     </a>
-                    
-                    <a href="{{ route('feedback.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/5 text-gray-700 transition-colors group">
-                        <span class="inline-flex w-5">
-                            <svg class="w-5 h-5 text-primary group-hover:text-primary/80" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>
-                            </svg>
-                        </span>
-                        <span class="font-medium">Feedback</span>
+                    <a href="{{ route('feedback.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700 text-sm">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg></span>
+                        Feedback
                     </a>
                 </nav>
-                
-                <!-- Mobile Logout -->
-                <div class="md:hidden mt-6 pt-4 border-t border-gray-200">
+                <div class="mt-6 pt-4 border-t border-gray-200">
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
-                        <button class="w-full px-3 py-2.5 rounded-lg ring-1 ring-gray-300 hover:bg-gray-50 text-sm font-medium transition-colors">
-                            Logout
-                        </button>
+                        <button class="w-full px-3 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm">Logout</button>
                     </form>
                 </div>
+            </div>
+        </aside>
+
+        <!-- Desktop Sidebar -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <div class="bg-white/80 backdrop-blur ring-1 ring-gray-200 rounded-2xl p-3 sticky top-24">
+                <a href="{{ route('admin.dashboard') }}" class="w-full mb-2 px-4 py-3 rounded-xl text-white bg-gradient-to-r from-primary via-secondary to-accent block text-center">Dashboard</a>
+                <nav class="text-sm">
+                    <a href="{{ route('packages.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 3h4v2H6V7zm0 3h8v2H6v-2z"/></svg></span>
+                        Packages
+                    </a>
+                    <a href="{{ route('photos.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/></svg></span>
+                        Photos
+                    </a>
+                    <a href="{{ route('feedback.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/5 text-gray-700">
+                        <span class="inline-flex w-5"><svg class="w-5 h-5 text-primary" viewBox="0 0 20 20" fill="currentColor"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/></svg></span>
+                        Feedback
+                    </a>
+                </nav>
             </div>
         </aside>
 
@@ -411,8 +402,8 @@
     <div id="eventModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
         
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+        <div class="relative min-h-[100dvh] flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90dvh] overflow-hidden">
                 <!-- Modal Header -->
                 <div class="flex items-center justify-between p-6 border-b border-gray-200">
                     <div>
@@ -427,7 +418,7 @@
                 </div>
                 
                 <!-- Modal Content -->
-                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <div class="p-6 overflow-y-auto max-h-[calc(90dvh-120px)]">
                     <div id="modalContent" class="space-y-6">
                         <!-- Loading state -->
                         <div id="modalLoading" class="text-center py-12">
@@ -568,6 +559,8 @@
             modalLoading.classList.remove('hidden');
             modalPhotos.classList.add('hidden');
             modalEmpty.classList.add('hidden');
+            // Prevent background scrolling when modal is open
+            document.body.classList.add('overflow-hidden');
             
             // Load photos for this event type
             loadEventPhotos(eventType);
@@ -576,6 +569,8 @@
         function closeEventModal() {
             const modal = document.getElementById('eventModal');
             modal.classList.add('hidden');
+            // Restore background scroll
+            document.body.classList.remove('overflow-hidden');
         }
 
         function loadEventPhotos(eventType) {

@@ -215,7 +215,7 @@
     <!-- Enhanced Logo/Brand Section with 3D Effects -->
     <div class="relative mb-8 group animate-on-scroll mt-20" data-aos="fade-up" data-aos-duration="1000">
       <div class="relative inline-block transform-gpu hover:rotate-y-12 transition-transform duration-700">
-        <img src="image/nalbu.png" alt="AD Logo" class="w-48 h-48 md:w-56 md:h-56 inline-block drop-shadow-2xl hover:scale-110 transition-all duration-500">
+        <img src="image/nalbu.png" alt="AD Logo" class="w-30 h-30 md:w-30 md:h-30 inline-block drop-shadow-2xl hover:scale-110 transition-all duration-500">
         <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-accent to-secondary rounded-full flex items-center justify-center animate-pulse-glow shadow-lg">
           <i class="fas fa-camera text-white text-sm"></i>
         </div>
@@ -224,12 +224,7 @@
       </div>
     </div>
 
-    <!-- Enhanced Typography with Staggered Animation -->
-    <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight animate-on-scroll" data-aos="fade-up" data-aos-delay="200">
-    
-      <span class="block text-4xl md:text-5xl lg:text-6xl mt-4 font-bold">Mirror Photo Booth</span>
-    </h1>
-    
+   
     <p class="text-xl md:text-2xl lg:text-3xl text-gray-700 mb-12 leading-relaxed max-w-3xl animate-on-scroll" data-aos="fade-up" data-aos-delay="400">
       Experience the magic of our state-of-the-art mirror photo booth. 
       Perfect for weddings, corporate events, and special celebrations in Cebu City.
