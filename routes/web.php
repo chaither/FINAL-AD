@@ -9,8 +9,11 @@ use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\StatsController;
 use App\Http\Controllers\ContactInfoController;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/', [PackageController::class, 'publicPackages']);
+// SEO: sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 // Public message submission
 Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
 // Public feedback submission

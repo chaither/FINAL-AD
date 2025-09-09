@@ -14,7 +14,9 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:title" content="@yield('og_title', 'Mirror Photo Booth Cebu')">
     <meta property="og:description" content="@yield('og_description', 'Interactive Mirror Photo Booth rental for unforgettable events in Cebu.')">
-    <meta property="og:image" content="@yield('og_image', asset('images/booth.jpg'))">
+    <meta property="og:image" content="@yield('og_image', asset('image/mirror.webp'))">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
 
@@ -22,10 +24,50 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('twitter_title', 'Mirror Photo Booth Cebu')">
     <meta name="twitter:description" content="@yield('twitter_description', 'Make your event unforgettable with our modern photo booth.')">
-    <meta name="twitter:image" content="@yield('twitter_image', asset('images/booth.jpg'))">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('image/mirror.webp'))">
 
     <!-- Canonical -->
     <link rel="canonical" href="{{ url()->current() }}">
+    <meta name="theme-color" content="#8a4813">
+
+    <!-- JSON-LD Organization + WebSite -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "AD Mirror Photo Booth",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('image/nalbu.png') }}",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=61565882637150"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cebu City",
+        "addressRegion": "CEB",
+        "addressCountry": "PH"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "telephone": "{{ $contactInfo['phone'] ?? '' }}",
+        "email": "{{ $contactInfo['email'] ?? '' }}"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "AD Mirror Photo Booth Cebu",
+      "url": "{{ url('/') }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ url('/') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
