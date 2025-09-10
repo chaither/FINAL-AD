@@ -29,46 +29,66 @@
     <!-- Canonical -->
     <link rel="canonical" href="{{ url()->current() }}">
     <meta name="theme-color" content="#8a4813">
+<!-- ✅ JSON-LD for Organization -->
+<script type="application/ld+json">
+@php
+    $org = [
+        "@context" => "https://schema.org",
+        "@type" => "Organization",
+        "name" => "AD Mirror Photo Booth",
+        "url" => url('/'),
+        "logo" => asset('image/nalbu.png'),
+        "sameAs" => [
+            "https://www.facebook.com/profile.php?id=61565882637150"
+        ],
+        "address" => [
+            "@type" => "PostalAddress",
+            "addressLocality" => "Cebu City",
+            "addressRegion" => "CEB",
+            "addressCountry" => "PH"
+        ],
+    ];
 
-    <!-- JSON-LD Organization + WebSite -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "AD Mirror Photo Booth",
-      "url": "{{ url('/') }}",
-      "logo": "{{ asset('image/nalbu.png') }}",
-      "sameAs": [
-        "https://www.facebook.com/profile.php?id=61565882637150"
-      ],
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Cebu City",
-        "addressRegion": "CEB",
-        "addressCountry": "PH"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "telephone": "{{ $contactInfo['phone'] ?? '' }}",
-        "email": "{{ $contactInfo['email'] ?? '' }}"
-      }
+    $contact = $contactInfo ?? [];
+    $telephone = data_get($contact, 'phone', '');
+    $email = data_get($contact, 'email', '');
+
+    if ($telephone !== '' || $email !== '') {
+        $org['contactPoint'] = [
+            "@type" => "ContactPoint",
+            "contactType" => "customer service",
+        ];
+        if ($telephone !== '') {
+            $org['contactPoint']['telephone'] = $telephone;
+        }
+        if ($email !== '') {
+            $org['contactPoint']['email'] = $email;
+        }
     }
-    </script>
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "AD Mirror Photo Booth Cebu",
-      "url": "{{ url('/') }}",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "{{ url('/') }}?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    }
-    </script>
-  
+
+    echo json_encode($org, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+@endphp
+</script>
+
+<!-- ✅ JSON-LD for Website -->
+<script type="application/ld+json">
+@php
+    $site = [
+        "@context" => "https://schema.org",
+        "@type" => "WebSite",
+        "name" => "AD Mirror Photo Booth Cebu",
+        "url" => url('/'),
+        "potentialAction" => [
+            "@type" => "SearchAction",
+            "target" => url('/') . '?q={search_term_string}',
+            "query-input" => "required name=search_term_string"
+        ]
+    ];
+
+    echo json_encode($site, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+@endphp
+</script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
